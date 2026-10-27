@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tally: Expense Tracker
 
-## Getting Started
+A personal expense tracker built with Next.js 14 (App Router), TypeScript and Tailwind CSS. Data is stored in your browser's `localStorage`. There is no account and no server.
 
-First, run the development server:
+## Features
+
+- **Add, edit and delete expenses**, each with an amount, date, category and description. The form validates every field, and deleting can be undone from the toast.
+- **Dashboard**: spending this month compared with last month, daily average, all-time total, top category, a 6-month spending chart, a category breakdown (this month, last month, this year or all time) and recent expenses.
+- **Expenses page**: search, category filter, date presets plus a custom from/to range, sorting, and a running count and total for the current filters.
+- **CSV export** of the expenses that match the current filters. The file opens in Excel or Google Sheets.
+- Responsive layout for desktop and mobile, light and dark mode (following the system setting), keyboard-accessible dialogs, and loading and error states.
+
+## Getting started
+
+Requires Node.js 18.17 or later.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For a production build:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Data
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Expenses are saved under the `localStorage` key `expense-tracker:expenses:v1`, per browser and per origin. Clearing site data deletes them, so use **Export CSV** to keep a backup.
