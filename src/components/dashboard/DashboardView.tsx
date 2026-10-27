@@ -11,7 +11,7 @@ import { useExpenses } from "@/components/providers/ExpensesProvider";
 import { useToast } from "@/components/providers/ToastProvider";
 import { EmptyState, Skeleton } from "@/components/ui/EmptyState";
 import { dashboardStats, monthlyTotals, totalsByCategory } from "@/lib/analytics";
-import { downloadCsv } from "@/lib/csv";
+import { saveCsv } from "@/lib/csv";
 import { DATE_PRESETS, filterExpenses, EMPTY_FILTERS, sortExpenses } from "@/lib/filters";
 import { formatMonth, monthKey } from "@/lib/format";
 import { CategoryBreakdown } from "./CategoryBreakdown";
@@ -56,11 +56,12 @@ export function DashboardView() {
     }
   };
 
-  const handleExport = () => {
+  const handleExport = async () => {
     try {
-      downloadCsv(sortExpenses(expenses, "date-desc"));
+      const saved = await saveCsv(sortExpenses(expenses, "date-desc"));
+      if (saved) toast({ title: "Export ready", description: `${expenses.length} expense${expenses.length === 1 ? "" : "s"} saved to CSV.` });
     } catch {
-      toast({ variant: "error", title: "Export failed", description: "Your browser blocked the download." });
+      toast({ variant: "error", title: "Export failed", description: "The CSV file couldn't be saved." });
     }
   };
 
