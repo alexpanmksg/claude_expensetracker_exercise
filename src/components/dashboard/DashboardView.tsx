@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Plus, Sparkles, Wallet } from "lucide-react";
+import { ArrowRight, Download, Plus, Sparkles, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 import { ExpenseList } from "@/components/expenses/ExpenseList";
@@ -11,6 +11,7 @@ import { useExpenses } from "@/components/providers/ExpensesProvider";
 import { useToast } from "@/components/providers/ToastProvider";
 import { EmptyState, Skeleton } from "@/components/ui/EmptyState";
 import { dashboardStats, monthlyTotals, totalsByCategory } from "@/lib/analytics";
+import { downloadCsv } from "@/lib/csv";
 import { DATE_PRESETS, filterExpenses, EMPTY_FILTERS, sortExpenses } from "@/lib/filters";
 import { formatMonth, monthKey } from "@/lib/format";
 import { CategoryBreakdown } from "./CategoryBreakdown";
@@ -55,11 +56,28 @@ export function DashboardView() {
     }
   };
 
+  const handleExport = () => {
+    try {
+      downloadCsv(sortExpenses(expenses, "date-desc"));
+    } catch {
+      toast({ variant: "error", title: "Export failed", description: "Your browser blocked the download." });
+    }
+  };
+
   const header = (
     <PageHeader
       title="Dashboard"
       // The page is prerendered at build time, so the date-dependent part waits for the client.
       subtitle={`Your spending at a glance${isLoaded ? ` · ${formatMonth(monthKey(now), "long")}` : ""}`}
+      actions={
+        isLoaded &&
+        expenses.length > 0 && (
+          <button type="button" className="btn-secondary" onClick={handleExport}>
+            <Download className="h-4 w-4" aria-hidden />
+            Export Data
+          </button>
+        )
+      }
     />
   );
 

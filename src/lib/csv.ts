@@ -8,12 +8,12 @@ function escapeCell(value: string): string {
 }
 
 export function expensesToCsv(expenses: Expense[]): string {
-  const header = ["Date", "Category", "Description", "Amount"];
+  const header = ["Date", "Category", "Amount", "Description"];
   const rows = expenses.map((e) => [
     e.date,
     e.category,
-    escapeCell(e.description),
     e.amount.toFixed(2),
+    escapeCell(e.description),
   ]);
   return [header, ...rows].map((row) => row.join(",")).join("\r\n");
 }
