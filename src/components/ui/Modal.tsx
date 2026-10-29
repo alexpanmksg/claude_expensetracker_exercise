@@ -9,14 +9,20 @@ interface ModalProps {
   title: string;
   description?: string;
   children: ReactNode;
-  size?: "sm" | "md";
+  /** Pinned below the scrolling body, for actions that must stay reachable. */
+  footer?: ReactNode;
+  size?: "sm" | "md" | "lg" | "xl";
+  /** False while work is in progress: Esc, the backdrop and the close button do nothing. */
+  dismissible?: boolean;
 }
 
-export function Modal({ open, onClose, title, description, children, size = "md" }: ModalProps) {
+const SIZES = { sm: "sm:max-w-md", md: "sm:max-w-lg", lg: "sm:max-w-2xl", xl: "sm:max-w-5xl" };
+
+export function Modal({ open, onClose, title, description, children, footer, size = "md", dismissible = true }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
+  onCloseRef.current = dismissible ? onClose : () => {};
 
   useEffect(() => {
     if (!open) return;
@@ -64,29 +70,32 @@ export function Modal({ open, onClose, title, description, children, size = "md"
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
-      <div className="absolute inset-0 animate-fade-in bg-black/40 backdrop-blur-[2px]" onClick={onClose} aria-hidden />
+      <div
+        className="absolute inset-0 animate-fade-in bg-black/40 backdrop-blur-[2px]"
+        onClick={() => onCloseRef.current()}
+        aria-hidden
+      />
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={`relative max-h-[92vh] w-full animate-slide-up overflow-y-auto rounded-t-2xl border border-border bg-surface shadow-pop focus:outline-none sm:rounded-2xl ${
-          size === "sm" ? "sm:max-w-md" : "sm:max-w-lg"
-        }`}
+        className={`relative flex max-h-[92vh] w-full animate-slide-up flex-col overflow-hidden rounded-t-2xl border border-border bg-surface shadow-pop focus:outline-none sm:rounded-2xl ${SIZES[size]}`}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
+        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
           <div>
             <h2 id={titleId} className="text-base font-semibold text-ink">
               {title}
             </h2>
             {description && <p className="mt-0.5 text-sm text-ink-2">{description}</p>}
           </div>
-          <button type="button" aria-label="Close" className="icon-btn -mr-2" onClick={onClose}>
+          <button type="button" aria-label="Close" className="icon-btn -mr-2" onClick={onClose} disabled={!dismissible}>
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="px-5 py-5 sm:px-6">{children}</div>
+        <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">{children}</div>
+        {footer && <div className="shrink-0 border-t border-border bg-surface px-5 py-4 sm:px-6">{footer}</div>}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { todayISO } from "./format";
 import type { Expense } from "./types";
 
-function escapeCell(value: string): string {
+export function escapeCell(value: string): string {
   // Neutralize spreadsheet formula injection (=, +, -, @ at the start of a cell).
   const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
   return /[",\n\r]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
